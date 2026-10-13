@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f6f7f2"><meta name="description" content="小小生活实验室，用温柔的记录，让生活更清晰。体重、饮食、学习、时间与日记，本地保存。">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+<link rel="manifest" href="./manifest.webmanifest"><link rel="icon" href="./icons/icon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="./icons/icon-192.png"><link rel="stylesheet" href="./styles.css">
+<title>小小生活实验室</title>
+</head>
+<body>
+<aside class="sidebar"><a class="brand" href="#home"><span class="brand-mark">✳</span><span>小小生活<br><b>实验室</b><small>LITTLE LIFE LAB</small></span></a><span class="nav-label">我的生活手册</span><nav id="desktop-nav" aria-label="主导航"></nav><div class="sidebar-note"><span>✿</span><p>每一个小小的记录，<br>都在让生活更清晰。</p><small>按照自己的节奏就好。</small></div><button class="settings-link" data-action="settings">⚙ 设置与备份 <span class="dot"></span></button><div class="local-note"><i></i> 数据保存在这台设备</div></aside>
+<div class="app"><header><div class="mobile-brand">✳ 小小生活实验室</div><div class="breadcrumb">我的生活手册 <span>/</span> <b id="page-name">今日概览</b></div><div class="header-end"><span id="connection">本地优先 · 私密记录</span><button class="icon-button" data-action="settings" aria-label="设置与备份">⚙</button></div></header><main><div class="page-heading"><div><p class="eyebrow" id="eyebrow">A LITTLE BETTER, AT YOUR OWN PACE</p><h1 id="heading">把日子，过成自己的样子<span>✧</span></h1><p class="subtitle" id="subtitle">不必每一天都很完美，记录本身就是一种照顾。</p></div><div class="date-control"><button class="icon-button" data-action="prev-date" aria-label="前一天">‹</button><input type="date" id="selected-date" aria-label="选择记录日期"><button class="icon-button" data-action="next-date" aria-label="后一天">›</button><button class="today-button" data-action="today">今天</button></div></div><div id="content" aria-live="polite"><div class="card">正在打开你的生活手册…</div></div><footer>数据负责描述生活，而不是评价我这个人。<span>小小生活实验室 · V1.0</span></footer></main></div>
+<nav class="bottom-nav" id="mobile-nav" aria-label="手机导航"></nav>
+<dialog id="editor"><form id="record-form"><div class="dialog-heading"><div><p class="eyebrow">A LITTLE MOMENT</p><h2 id="editor-title"></h2></div><button type="button" class="icon-button" data-action="close-editor" aria-label="关闭">×</button></div><div id="editor-fields"></div><p id="form-error" class="error" role="alert"></p><div class="dialog-actions"><button type="button" class="button secondary" data-action="close-editor">取消</button><button type="submit" class="button primary" id="save-record">保存记录</button></div></form></dialog>
+<dialog id="lightbox"><button class="icon-button" data-action="close-photo" aria-label="关闭大图">×</button><img id="full-photo" alt="生活照片大图"></dialog>
+<dialog id="import-dialog"><div class="dialog-heading"><h2>检查备份与恢复</h2><button class="icon-button" data-action="close-import" aria-label="关闭">×</button></div><div id="import-preview"></div><label class="choice"><input type="radio" name="import-mode" value="merge" checked> 合并：保留现有记录，冲突保留最后修改的版本</label><label class="choice"><input type="radio" name="import-mode" value="replace"> 覆盖：用此备份完整替换当前记录及照片</label><p class="hint">请先导出当前数据。合并不会同步删除操作；覆盖会移除备份中没有的记录。相同日期的体重、日记视为同一条。</p><div class="dialog-actions"><button class="button secondary" data-action="export">先备份当前数据</button><button class="button primary" data-action="confirm-import">确认恢复</button></div></dialog>
+<div id="toast" role="status"></div><script type="module" src="./js/app.js"></script>
+</body></html>
