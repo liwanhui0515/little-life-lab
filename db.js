@@ -1,0 +1,14 @@
+import {validateRecord,mergeRecords} from './core.js';
+const NAME='little-life-lab-v1';let db;
+export function openDB(){return new Promise((resolve,reject)=>{const req=indexedDB.open(NAME,1);req.onupgradeneeded=()=>{const d=req.result;d.createObjectStore('records',{keyPath:'id'});d.createObjectStore('photos',{keyPath:'id'});d.createObjectStore('settings',{keyPath:'key'});};req.onsuccess=()=>{db=req.result;db.onversionchange=()=>db.close();resolve(db);};req.onerror=()=>reject(req.error);req.onblocked=()=>reject(Error('请关闭其他打开本应用的标签页后重试'));});}
+function request(req){return new Promise((resolve,reject)=>{req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error);});}
+function done(tx){return new Promise((resolve,reject)=>{tx.oncomplete=resolve;tx.onabort=()=>reject(tx.error||Error('保存已取消'));tx.onerror=()=>{};});}
+export async function allRecords(){return request(db.transaction('records').objectStore('records').getAll());}
+export async function getPhoto(id){return request(db.transaction('photos').objectStore('photos').get(id));}
+export async function setting(key){return (await request(db.transaction('settings').objectStore('settings').get(key)))?.value;}
+export async function setSetting(key,value){const tx=db.transaction('settings','readwrite'),p=done(tx);tx.objectStore('settings').put({key,value});await p;}
+function prune(tx,rows){const used=new Set(rows.flatMap(r=>r.photos||[]));const req=tx.objectStore('photos').openCursor();req.onsuccess=()=>{const c=req.result;if(c){if(!used.has(c.key))c.delete();c.continue();}};}
+export async function saveRecord(row,photos=[]){validateRecord(row);const tx=db.transaction(['records','photos'],'readwrite'),p=done(tx);tx.objectStore('records').put(row);for(const photo of photos)tx.objectStore('photos').put(photo);const req=tx.objectStore('records').getAll();req.onsuccess=()=>prune(tx,req.result);await p;}
+export async function deleteRecord(id){const tx=db.transaction(['records','photos'],'readwrite'),p=done(tx);tx.objectStore('records').delete(id);const req=tx.objectStore('records').getAll();req.onsuccess=()=>prune(tx,req.result);await p;}
+export async function snapshot(){const tx=db.transaction(['records','photos']),p=done(tx);const [records,photos]=await Promise.all([request(tx.objectStore('records').getAll()),request(tx.objectStore('photos').getAll())]);await p;return {records,photos};}
+export async function restore(records,photos,mode){const tx=db.transaction(['records','photos'],'readwrite'),p=done(tx);const rs=tx.objectStore('records'),ps=tx.objectStore('photos');const req=rs.getAll();req.onsuccess=()=>{let rows=records;if(mode==='replace'){rs.clear();ps.clear();}else rows=mergeRecords(req.result,records);for(const r of rows)rs.put(r);for(const photo of photos)ps.put(photo);prune(tx,rows);};await p;}
